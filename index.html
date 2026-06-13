@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vikingos — Burgers & Wings | El Gran Salón</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Cinzel:wght@400;700;900&family=Barlow:wght@300;400;500;600;800&family=Barlow+Condensed:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg-dark: #050505;
+  --bg-iron: #0f0f0f;
+  --bg-smoke: #141010;
+  --blood: #990000;
+  --blood-bright: #d40000;
+  --fire: #ff4500;
+  --fire-glow: rgba(255, 69, 0, 0.4);
+  --gold: #c29b62;
+  --gold-dim: rgba(194, 155, 98, 0.15);
+  --parchment: #eaddcf;
+  --parchment-dim: rgba(234, 221, 207, 0.6);
+  --steel: #333333;
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior: smooth; background: var(--bg-dark); scroll-padding-top: 60px; }
+body {
+    background-color: var(--bg-dark);
+    background-image: radial-gradient(circle at 50% 0%, rgba(153, 0, 0, 0.08) 0%, transparent 80%),
+                      url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.03'/%3E%3C/svg%3E");
+    color: var(--parchment);
+    font-family: 'Barlow', sans-serif;
+    overflow-x: hidden;
+}
+
+::selection { background: var(--blood-bright); color: #fff; }
+
+.hidden-scroll {
+    opacity: 0;
+    transform: translateY(40px) scale(0.95);
+    transition: all 0.7s cubic-bezier(0.25, 1, 0.5, 1);
+}
+.show-scroll {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+}
+
+/* ═══ HERO ═══ */
+.hero {
+    position: relative; height: 100vh; min-height: 600px;
+    display: flex; flex-direction: column; justify-content: center; align-items: center;
+    text-align: center; overflow: hidden;
+    border-bottom: 3px solid var(--blood);
+    box-shadow: 0 10px 50px var(--fire-glow);
+}
+
+.hero-slide {
+    position: absolute; inset: 0; background-size: cover; background-position: center;
+    opacity: 0; animation: valhalla-fade 25s infinite; filter: contrast(1.1) brightness(0.7);
+}
+.hero-slide:nth-child(1) { background-image: url('assets/hero/hero1.jpg'); animation-delay: 0s; }
+.hero-slide:nth-child(2) { background-image: url('assets/hero/hero2.jpg'); animation-delay: 5s; }
+.hero-slide:nth-child(3) { background-image: url('assets/hero/hero3.jpg'); animation-delay: 10s; }
+.hero-slide:nth-child(4) { background-image: url('assets/hero/hero4.jpg'); animation-delay: 15s; }
+.hero-slide:nth-child(5) { background-image: url('assets/hero/hero5.jpg'); animation-delay: 20s; }
+
+@keyframes valhalla-fade {
+    0% { opacity: 0; transform: scale(1); }
+    5% { opacity: 1; transform: scale(1.02); }
+    15% { opacity: 1; transform: scale(1.05); }
+    20% { opacity: 0; transform: scale(1.08); }
+    100% { opacity: 0; }
+}
+
+.hero-overlay {
+    position: absolute; inset: 0;
+    background: linear-gradient(to bottom, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.2) 40%, rgba(5,5,5,1) 100%),
+                radial-gradient(circle at center, transparent 0%, rgba(153,0,0,0.5) 100%);
+}
+
+.embers { position: absolute; bottom: 0; left: 0; width: 100%; height: 60%; pointer-events: none; z-index: 2; }
+.e { position: absolute; bottom: -10px; border-radius: 50%; animation: rise-fire linear infinite; filter: blur(1px); box-shadow: 0 0 10px var(--fire); background: var(--fire); }
+@keyframes rise-fire {
+    0% { opacity: 0; transform: translateY(0) translateX(0) scale(1); }
+    10% { opacity: 1; }
+    80% { opacity: 0.8; }
+    100% { opacity: 0; transform: translateY(-500px) translateX(var(--d)) scale(0.1); }
+}
+
+.hero-content { position: relative; z-index: 10; padding: 20px; }
+
+.hero-logo-img {
+    width: clamp(240px, 32vw, 400px);
+    height: auto;
+    display: block;
+    margin: 0 auto;
+    filter: drop-shadow(0 0 20px var(--blood)) drop-shadow(0 0 40px var(--blood)) drop-shadow(0 6px 20px rgba(0,0,0,0.9));
+    animation: rage-pulse-img 3s infinite alternate;
+}
+@keyframes rage-pulse-img {
+    0% { filter: drop-shadow(0 0 10px var(--blood)) drop-shadow(0 0 20px var(--blood)) drop-shadow(0 6px 20px rgba(0,0,0,0.9)); transform: scale(1); }
+    100% { filter: drop-shadow(0 0 30px var(--fire)) drop-shadow(0 0 60px var(--blood)) drop-shadow(0 6px 20px rgba(0,0,0,0.9)); transform: scale(1.03); }
+}
+
+.hero-rule {
+    width: 150px; height: 3px; background: linear-gradient(to right, transparent, var(--fire), transparent);
+    margin: 18px auto 20px; box-shadow: 0 0 15px var(--fire);
+}
+.hero-sub {
+    font-family: 'Barlow Condensed', sans-serif; font-size: clamp(16px, 2.5vw, 24px);
+    letter-spacing: 0.4em; color: var(--parchment); text-transform: uppercase;
+    font-weight: 700; text-shadow: 2px 2px 4px #000;
+}
+
+.btn {
+    display: inline-block; padding: 16px 40px; margin-top: 40px;
+    background: rgba(0,0,0,0.5); border: 2px solid var(--blood-bright);
+    color: #fff; font-family: 'Bebas Neue', sans-serif; font-size: 1.6em; letter-spacing: 3px;
+    text-transform: uppercase; text-decoration: none; position: relative;
+    overflow: hidden; transition: 0.3s; box-shadow: inset 0 0 0 0 var(--blood-bright);
+}
+.btn::before {
+    content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+    transition: 0.5s;
+}
+.btn:hover { box-shadow: inset 0 0 20px 20px var(--blood-bright), 0 0 25px var(--blood); transform: scale(1.05); border-color: var(--fire); color: #fff; }
+.btn:hover::before { left: 100%; }
+
+/* ═══ NAV ═══ */
+.sticky-nav {
+    position: sticky; top: 0; z-index: 100; background: rgba(5, 5, 5, 0.95);
+    backdrop-filter: blur(10px); border-bottom: 2px solid var(--blood);
+    box-shadow: 0 4px 25px rgba(0,0,0,0.9);
+}
+.nav-inner { display: flex; gap: 8px; overflow-x: auto; padding: 12px 20px; max-width: 1500px; margin: 0 auto; scrollbar-width: none; }
+.nav-inner::-webkit-scrollbar { display: none; }
+.nav-tab {
+    flex-shrink: 0; padding: 8px 18px; border: 1px solid var(--steel);
+    color: var(--parchment-dim); font-family: 'Barlow Condensed', sans-serif; font-size: 1rem;
+    font-weight: 700; letter-spacing: 1px; text-transform: uppercase; text-decoration: none;
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    clip-path: polygon(8% 0, 100% 0, 92% 100%, 0% 100%);
+    background: var(--bg-iron);
+}
+.nav-tab:hover { color: #fff; border-color: var(--fire); background: rgba(255,69,0,0.15); transform: translateY(-2px); }
+.nav-tab.active { background: var(--blood); color: #fff; border-color: var(--blood-bright); box-shadow: 0 0 15px var(--blood); }
+
+/* ═══ CARRUSELES ═══ */
+.photo-carousel { width: 100%; height: 350px; position: relative; overflow: hidden; background: #000; border-top: 2px solid var(--steel); border-bottom: 2px solid var(--steel); }
+.photo-carousel.tall { height: 450px; }
+.photo-carousel::after { content: ''; position: absolute; inset: 0; pointer-events: none; box-shadow: inset 0 0 60px 30px var(--bg-dark); }
+.pc-track { display: flex; height: 100%; gap: 5px; animation: scroll-x var(--spd, 40s) linear infinite; }
+.photo-carousel:hover .pc-track { animation-play-state: paused; }
+.pc-img { flex-shrink: 0; height: 100%; width: auto; min-width: 300px; object-fit: cover; filter: sepia(0.2) contrast(1.2) brightness(0.7); transition: 0.5s; }
+.pc-img:hover { filter: sepia(0) contrast(1.1) brightness(1.1); transform: scale(1.02); z-index: 2; position: relative; }
+@keyframes scroll-x { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+
+/* ═══ SECCIONES ═══ */
+.sec-wrap { width: 100%; position: relative; }
+.sec-wrap.alt { background: var(--bg-iron); border-top: 1px dashed var(--steel); border-bottom: 1px dashed var(--steel); }
+.sec { padding: 80px 20px; max-width: 1300px; margin: 0 auto; }
+.sec-label { font-family: 'Barlow Condensed', sans-serif; font-size: 1.1rem; font-weight: 800; letter-spacing: 5px; color: var(--blood-bright); text-transform: uppercase; margin-bottom: 5px; display: inline-block; background: #000; padding: 5px 15px; border-left: 4px solid var(--fire); }
+.sec-title { font-family: 'Cinzel', serif; font-size: clamp(40px, 6vw, 75px); font-weight: 900; color: #fff; line-height: 1; text-shadow: 3px 3px 0 var(--blood); margin-top: 10px; }
+.sec-rule { width: 80px; height: 4px; background: var(--fire); margin: 20px 0 45px; position: relative; }
+.sec-rule::after { content: ''; position: absolute; top: -3px; left: 100%; width: 0; height: 0; border-top: 5px solid transparent; border-bottom: 5px solid transparent; border-left: 10px solid var(--fire); }
+
+.info-box { font-size: 1rem; color: var(--parchment); padding: 18px 25px; border-left: 4px solid var(--fire); background: rgba(255, 69, 0, 0.05); margin-bottom: 35px; font-weight: 500; box-shadow: inset 0 0 20px rgba(0,0,0,0.5); }
+.info-box strong { color: var(--gold); }
+
+/* ═══ MENÚ ═══ */
+.menu-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 15px; }
+.mi {
+    display: flex; align-items: center; justify-content: space-between; padding: 22px;
+    background: var(--bg-smoke); border: 1px solid var(--steel);
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    position: relative; overflow: hidden; z-index: 1;
+}
+.mi::before { content: ''; position: absolute; top: 0; left: 0; height: 100%; width: 0; background: linear-gradient(90deg, var(--blood), transparent); z-index: -1; transition: width 0.4s ease; }
+.mi:hover { transform: translateX(8px) scale(1.02); border-color: var(--blood-bright); box-shadow: -6px 0 20px var(--blood); }
+.mi:hover::before { width: 100%; }
+.mi-name { font-family: 'Bebas Neue', sans-serif; font-size: 1.8rem; letter-spacing: 2px; color: #fff; line-height: 1.1; }
+.mi-sub { font-family: 'Barlow', sans-serif; font-size: 0.85rem; color: var(--parchment-dim); margin-top: 6px; font-style: italic; }
+.mi-price { font-family: 'Bebas Neue', sans-serif; font-size: 2.1rem; color: var(--fire); margin-left: 15px; white-space: nowrap; text-shadow: 2px 2px 5px rgba(0,0,0,0.8); }
+
+.mi.special { border-color: var(--gold); background: rgba(194, 155, 98, 0.05); }
+.mi.special .mi-name { color: var(--gold); }
+.mi.special:hover::before { background: linear-gradient(90deg, rgba(194,155,98,0.3), transparent); }
+
+/* ═══ SALVAJADAS ═══ */
+.salv-wrap { width: 100%; background: #020202; position: relative; overflow: hidden; border-top: 3px solid var(--blood); border-bottom: 3px solid var(--blood); }
+.salv-wrap::before { content: ''; position: absolute; top: 0; right: 0; bottom: 0; width: 50%; background: radial-gradient(circle, rgba(153,0,0,0.2) 0%, transparent 70%); pointer-events: none; }
+.salv-inner { display: grid; grid-template-columns: 1fr 1fr; min-height: 85vh; max-width: 1600px; margin: 0 auto; }
+.salv-photo { position: relative; overflow: hidden; }
+.salv-photo img { width: 100%; height: 100%; object-fit: cover; min-height: 600px; display: block; filter: contrast(1.2) brightness(0.8) saturate(1.2); transition: transform 12s linear; }
+.salv-wrap:hover .salv-photo img { transform: scale(1.1); }
+.salv-photo::after { content: ''; position: absolute; inset: 0; background: linear-gradient(to right, transparent 20%, #020202 95%); }
+
+.salv-content { padding: 80px 60px; display: flex; flex-direction: column; justify-content: center; position: relative; z-index: 2; }
+.salv-badge { display: inline-block; background: var(--blood-bright); color: #fff; font-family: 'Bebas Neue', sans-serif; font-size: 1.3rem; letter-spacing: 4px; padding: 8px 22px; transform: skewX(-12deg); box-shadow: 4px 4px 0 #000; margin-bottom: 20px; width: fit-content; animation: pulse-badge 2s infinite; }
+@keyframes pulse-badge { 0%, 100% { transform: skewX(-12deg) scale(1); } 50% { transform: skewX(-12deg) scale(1.05); box-shadow: 6px 6px 0 var(--fire); } }
+
+.salv-title { font-family: 'Cinzel', serif; font-size: clamp(60px, 8vw, 130px); font-weight: 900; line-height: 0.85; color: #fff; margin-bottom: 25px; text-shadow: 4px 4px 0 var(--blood); }
+.salv-includes { font-size: 1.05rem; color: var(--parchment); line-height: 1.8; padding: 20px; border-left: 4px solid var(--fire); background: rgba(255, 69, 0, 0.08); margin-bottom: 40px; box-shadow: inset 0 0 30px rgba(0,0,0,0.6); }
+.salv-includes strong { color: var(--fire); font-weight: 800; font-family: 'Barlow Condensed', sans-serif; font-size: 1.2rem; text-transform: uppercase; letter-spacing: 1px; }
+
+.tiers { display: flex; flex-direction: column; gap: 12px; }
+.tier { display: flex; align-items: center; justify-content: space-between; padding: 20px 25px; border: 1px solid var(--steel); background: rgba(20,20,20,0.8); transition: 0.3s; clip-path: polygon(0 0, 100% 0, 98% 100%, 2% 100%); }
+.tier:hover { border-color: var(--blood-bright); transform: scale(1.03); background: var(--blood); }
+.tier.hero-tier { border-color: var(--fire); background: rgba(255, 69, 0, 0.1); border-width: 2px; }
+.tier.hero-tier:hover { background: var(--fire); }
+.tier-name { font-family: 'Bebas Neue', sans-serif; font-size: 1.6rem; letter-spacing: 2px; color: #fff; }
+.tier-wings { font-size: 0.95rem; color: var(--gold); margin-top: 3px; font-style: italic; }
+.tier-price { font-family: 'Bebas Neue', sans-serif; font-size: 2.4rem; color: var(--fire); text-shadow: 2px 2px 5px #000; }
+.tier.hero-tier .tier-name, .tier.hero-tier .tier-price { color: #fff; }
+.tier:hover .tier-price { color: #fff; }
+
+/* ═══ ALAS ═══ */
+.alas-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-bottom: 40px; }
+.aq { background: var(--bg-smoke); border: 2px solid var(--steel); padding: 40px 20px; text-align: center; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); position: relative; overflow: hidden; }
+.aq::after { content: ''; position: absolute; inset: 0; background: url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 0h20v20H0V0zm10 10l10 10H0L10 10z' fill='%23ff0000' fill-opacity='0.05' fill-rule='evenodd'/%3E%3C/svg%3E"); opacity: 0; transition: 0.4s; }
+.aq:hover { transform: translateY(-10px); border-color: var(--fire); box-shadow: 0 15px 30px rgba(255,69,0,0.2); background: rgba(255,69,0,0.05); }
+.aq:hover::after { opacity: 1; }
+.aq-n { font-family: 'Cinzel', serif; font-weight: 900; font-size: 4.5rem; color: #fff; line-height: 1; text-shadow: 3px 3px 0 var(--blood); position: relative; z-index: 2; transition: 0.3s; }
+.aq:hover .aq-n { text-shadow: 4px 4px 0 var(--blood-bright), 0 0 20px var(--fire); }
+.aq-l { font-family: 'Barlow Condensed', sans-serif; font-size: 1.1rem; font-weight: 700; letter-spacing: 4px; color: var(--gold); text-transform: uppercase; margin: 10px 0 15px; position: relative; z-index: 2; }
+.aq-p { font-family: 'Bebas Neue', sans-serif; font-size: 2.5rem; color: var(--fire); position: relative; z-index: 2; }
+
+.sauces { display: flex; gap: 15px; flex-wrap: wrap; margin-top: 25px; }
+.sauce { padding: 10px 20px; border: 1px solid var(--steel); font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 1.1rem; letter-spacing: 2px; color: var(--parchment); text-transform: uppercase; transition: 0.3s; background: rgba(0,0,0,0.5); cursor: default; }
+.sauce:hover { background: var(--blood); border-color: var(--blood-bright); color: #fff; transform: scale(1.1) rotate(-3deg); box-shadow: 4px 4px 0 #000; }
+
+/* ═══ FOOTER ═══ */
+footer { background: #020202; border-top: 3px solid var(--blood); padding: 80px 20px 60px; text-align: center; position: relative; overflow: hidden; }
+footer::before { content: ''; position: absolute; bottom: -50px; left: 50%; transform: translateX(-50%); width: 400px; height: 100px; background: var(--blood); filter: blur(100px); opacity: 0.4; pointer-events: none; }
+.foot-logo-img { width: 180px; height: auto; margin: 0 auto 14px; display: block; opacity: 0.9; filter: drop-shadow(0 0 20px var(--blood)); }
+.foot-sub { font-family: 'Barlow Condensed', sans-serif; font-size: 1.1rem; font-weight: 700; letter-spacing: 8px; color: var(--gold); text-transform: uppercase; }
+.foot-rule { width: 60px; height: 2px; background: var(--steel); margin: 30px auto; }
+.foot-note { font-family: 'Barlow', sans-serif; font-size: 0.95rem; color: var(--steel); letter-spacing: 1px; text-transform: uppercase; }
+
+/* ═══ RESPONSIVE ═══ */
+@media(max-width:1024px){
+  .salv-inner { grid-template-columns: 1fr; }
+  .salv-photo img { min-height: 450px; }
+  .salv-photo::after { background: linear-gradient(to top, #020202 0%, transparent 50%); }
+  .salv-content { padding: 60px 30px; text-align: center; }
+  .salv-badge { margin: 0 auto 20px; }
+  .salv-includes { text-align: left; }
+}
+@media(max-width:768px){
+  .sec { padding: 60px 15px; }
+  .menu-list { grid-template-columns: 1fr; }
+  .alas-grid { grid-template-columns: repeat(2, 1fr); }
+  .hero-logo-img { width: 200px; }
+  .salv-title { font-size: 4.5rem; }
+  .photo-carousel { height: 250px; }
+  .photo-carousel.tall { height: 320px; }
+}
+@media(max-width:480px){
+  .aq-n { font-size: 3.5rem; }
+  .aq-p { font-size: 2rem; }
+  .hero-sub { font-size: 1rem; }
+  .btn { padding: 12px 25px; font-size: 1.3rem; }
+}
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="hero-slide"></div>
+  <div class="hero-slide"></div>
+  <div class="hero-slide"></div>
+  <div class="hero-slide"></div>
+  <div class="hero-slide"></div>
+  <div class="hero-overlay"></div>
+  <div class="embers" id="ember-container"></div>
+  <div class="hero-content hidden-scroll">
+    <img class="hero-logo-img" src="assets/logo/logo.png" alt="Vikingos Burgers & Wings">
+    <div class="hero-rule"></div>
+    <p class="hero-sub">Est. 2020 &nbsp;·&nbsp; Comida para Guerreros</p>
+    <a href="#hamburguesas" class="btn">Entrar al Gran Salón</a>
+  </div>
+</header>
+
+<nav class="sticky-nav">
+  <div class="nav-inner">
+    <a class="nav-tab active" href="#hamburguesas">Hamburguesas</a>
+    <a class="nav-tab" href="#salvajadas">Salvajadas</a>
+    <a class="nav-tab" href="#alas">Alas</a>
+    <a class="nav-tab" href="#salchipapas">Salchipapas</a>
+    <a class="nav-tab" href="#patacones">Patacones</a>
+    <a class="nav-tab" href="#asados">Asados</a>
+    <a class="nav-tab" href="#mazorcadas">Mazorcadas</a>
+    <a class="nav-tab" href="#entradas">Entradas</a>
+    <a class="nav-tab" href="#hotdogs">Hot Dogs</a>
+    <a class="nav-tab" href="#otros">Más</a>
+  </div>
+</nav>
+
+<div id="hamburguesas" class="sec-wrap">
+  <div class="photo-carousel tall" style="--spd:50s;">
+    <div class="pc-track">
+      <img class="pc-img" src="assets/hamburguesas/cheddar-burger.jpg" alt="">
+      <img class="pc-img" src="assets/hamburguesas/pulled-pork.jpg" alt="">
+      <img class="pc-img" src="assets/hamburguesas/honolulu.jpg" alt="">
+      <img class="pc-img" src="assets/hamburguesas/costena-burger.jpg" alt="">
+      <img class="pc-img" src="assets/hamburguesas/tex-mex.jpg" alt="">
+      <img class="pc-img" src="assets/hamburguesas/pulled-pork2.jpg" alt="">
+      <img class="pc-img" src="assets/hamburguesas/onion-burger.jpg" alt="">
+      <img class="pc-img" src="assets/hamburguesas/burger1.jpg" alt="">
+      <img class="pc-img" src="assets/hamburguesas/burger2.jpg" alt="">
+      <img class="pc-img" src="assets/hamburguesas/burger3.jpg" alt="">
+      <img class="pc-img" src="assets/hamburguesas/cheddar-burger.jpg" alt="">
+      <img class="pc-img" src="assets/hamburguesas/pulled-pork.jpg" alt="">
+      <img class="pc-img" src="assets/hamburguesas/honolulu.jpg" alt="">
+      <img class="pc-img" src="assets/hamburguesas/costena-burger.jpg" alt="">
+      <img class="pc-img" src="assets/hamburguesas/tex-mex.jpg" alt="">
+      <img class="pc-img" src="assets/hamburguesas/pulled-pork2.jpg" alt="">
+      <img class="pc-img" src="assets/hamburguesas/onion-burger.jpg" alt="">
+      <img class="pc-img" src="assets/hamburguesas/burger1.jpg" alt="">
+      <img class="pc-img" src="assets/hamburguesas/burger2.jpg" alt="">
+      <img class="pc-img" src="assets/hamburguesas/burger3.jpg" alt="">
+    </div>
+  </div>
+  <div class="sec">
+    <p class="sec-label hidden-scroll">El Arte de la Forja</p>
+    <h2 class="sec-title hidden-scroll">Hamburguesas</h2>
+    <div class="sec-rule hidden-scroll"></div>
+    <div class="menu-list">
+      <div class="mi hidden-scroll"><div><p class="mi-name">Vikinga Sencilla</p></div><span class="mi-price">$20.000</span></div>
+      <div class="mi hidden-scroll"><div><p class="mi-name">Vikinga Clásica</p></div><span class="mi-price">$24.000</span></div>
+      <div class="mi hidden-scroll"><div><p class="mi-name">Costeña Burger</p></div><span class="mi-price">$26.000</span></div>
+      <div class="mi hidden-scroll"><div><p class="mi-name">Vikinga Ranchera</p></div><span class="mi-price">$28.000</span></div>
+      <div class="mi hidden-scroll"><div><p class="mi-name">Cheddar Burger</p></div><span class="mi-price">$28.000</span></div>
+      <div class="mi hidden-scroll"><div><p class="mi-name">Honolulu</p></div><span class="mi-price">$28.000</span></div>
+      <div class="mi hidden-scroll"><div><p class="mi-name">Vikinga Pulled Pork</p></div><span class="mi-price">$29.000</span></div>
+      <div class="mi hidden-scroll"><div><p class="mi-name">Vikinga Crispy BBQ</p></div><span class="mi-price">$30.000</span></div>
+      <div class="mi hidden-scroll"><div><p class="mi-name">Caprichosa</p></div><span class="mi-price">$30.000</span></div>
+      <div class="mi hidden-scroll"><div><p class="mi-name">Vikinga Tex Mex</p></div><span class="mi-price">$32.000</span></div>
+      <div class="mi special hidden-scroll"><div><p class="mi-name">Doblemente Vikinga</p><p class="mi-sub">Doble mix · carne-pollo · doble pollo</p></div><span class="mi-price">$32.000</span></div>
+      <div class="mi hidden-scroll"><div><p class="mi-name">Vikinga Queso Azul</p></div><span class="mi-price">$32.000</span></div>
+    </div>
+  </div>
+</div>
+
+<div class="salv-wrap" id="salvajadas">
+  <div class="salv-inner">
+    <div class="salv-photo"><img src="assets/salvajadas/salvajadas.jpg" alt=""></div>
+    <div class="salv-content">
+      <span class="salv-badge hidden-scroll">🔥 LA MÁS PEDIDA</span>
+      <h2 class="salv-title hidden-scroll">SALVA<br>JADAS</h2>
+      <div class="salv-includes hidden-scroll">
+        <strong>Incluye:</strong> Carne · Pollo · Cerdo · Chorizo · Butifarra · Papas · Patacón · Arepa · Lechuga · Salsas · Queso · Maíz · Tocineta<br><br>
+        <em>Opción gratinada sin costo adicional para los dignos.</em>
+      </div>
+      <div class="tiers hidden-scroll">
+        <div class="tier"><div><p class="tier-name">1 Persona</p><p class="tier-wings">+ 1 pieza de alas</p></div><span class="tier-price">$30.000</span></div>
+        <div class="tier"><div><p class="tier-name">2 Personas</p><p class="tier-wings">+ 2 piezas de alas</p></div><span class="tier-price">$58.000</span></div>
+        <div class="tier"><div><p class="tier-name">3 Personas</p><p class="tier-wings">+ 3 piezas de alas</p></div><span class="tier-price">$78.000</span></div>
+        <div class="tier"><div><p class="tier-name">4 Personas</p><p class="tier-wings">+ 4 piezas de alas</p></div><span class="tier-price">$96.000</span></div>
+        <div class="tier hero-tier"><div><p class="tier-name">Big Familiar</p><p class="tier-wings">+ 6–7 piezas de alas</p></div><span class="tier-price">$150.000</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="sec-wrap alt" id="alas">
+  <div class="photo-carousel" style="--spd:35s;">
+    <div class="pc-track">
+      <img class="pc-img" src="assets/alas/alas1.jpg" alt="">
+      <img class="pc-img" src="assets/alas/alas2.png" alt="">
+      <img class="pc-img" src="assets/alas/alas3.png" alt="">
+      <img class="pc-img" src="assets/alas/alas4.jpg" alt="">
+      <img class="pc-img" src="assets/alas/alas1.jpg" alt="">
+      <img class="pc-img" src="assets/alas/alas2.png" alt="">
+      <img class="pc-img" src="assets/alas/alas3.png" alt="">
+      <img class="pc-img" src="assets/alas/alas4.jpg" alt="">
+    </div>
+  </div>
+  <div class="sec">
+    <p class="sec-label hidden-scroll">Firma de la Casa</p>
+    <h2 class="sec-title hidden-scroll">Alas de Batalla</h2>
+    <div class="sec-rule hidden-scroll"></div>
+    <div class="alas-grid hidden-scroll">
+      <div class="aq"><p class="aq-n">×6</p><p class="aq-l">Piezas</p><p class="aq-p">$25.000</p></div>
+      <div class="aq"><p class="aq-n">×12</p><p class="aq-l">Piezas</p><p class="aq-p">$48.000</p></div>
+      <div class="aq"><p class="aq-n">×18</p><p class="aq-l">Piezas</p><p class="aq-p">$74.000</p></div>
+      <div class="aq"><p class="aq-n">×24</p><p class="aq-l">Piezas</p><p class="aq-p">$96.000</p></div>
+    </div>
+    <p class="sec-label hidden-scroll" style="margin-bottom:12px;">Báñalas en Sangre — Elige tu Salsa</p>
+    <div class="sauces hidden-scroll">
+      <span class="sauce">🔥 BBQ Fuerte</span>
+      <span class="sauce">🍯 BBQ Suave</span>
+      <span class="sauce">🌻 Miel Mostaza</span>
+      <span class="sauce">🌿 Tártara</span>
+    </div>
+    <p class="hidden-scroll" style="font-size:0.9rem; color:var(--parchment-dim); margin-top:20px; font-style: italic;">Acompañadas de papas francesas. Ensalada adicional: $5.000</p>
+  </div>
+</div>
+
+<div class="sec-wrap" id="salchipapas">
+  <div class="photo-carousel" style="--spd:40s;">
+    <div class="pc-track">
+      <img class="pc-img" src="assets/salchipapas/salchipapas1.jpg" alt="">
+      <img class="pc-img" src="assets/salchipapas/salchipapas2.jpg" alt="">
+      <img class="pc-img" src="assets/salchipapas/salchipapas3.jpg" alt="">
+      <img class="pc-img" src="assets/salchipapas/salchipapas4.jpg" alt="">
+      <img class="pc-img" src="assets/salchipapas/salchipapas1.jpg" alt="">
+      <img class="pc-img" src="assets/salchipapas/salchipapas2.jpg" alt="">
+      <img class="pc-img" src="assets/salchipapas/salchipapas3.jpg" alt="">
+      <img class="pc-img" src="assets/salchipapas/salchipapas4.jpg" alt="">
+    </div>
+  </div>
+  <div class="sec">
+    <p class="sec-label hidden-scroll">El Festín de la Tropa</p>
+    <h2 class="sec-title hidden-scroll">Salchipapas</h2>
+    <div class="sec-rule hidden-scroll"></div>
+    <div class="info-box hidden-scroll">Ármate con 3 proteínas: <strong>Pollo · Carne · Cerdo · Salchicha · Chorizo · Butifarra</strong></div>
+    <div class="menu-list">
+      <div class="mi hidden-scroll"><div><p class="mi-name">Sencilla</p><p class="mi-sub">Para 2: $34.000</p></div><span class="mi-price">$18.000</span></div>
+      <div class="mi hidden-scroll"><div><p class="mi-name">Ranchera</p><p class="mi-sub">Para 2: $40.000</p></div><span class="mi-price">$22.000</span></div>
+      <div class="mi hidden-scroll"><div><p class="mi-name">Chori-papa</p><p class="mi-sub">Para 2: $40.000</p></div><span class="mi-price">$22.000</span></div>
+      <div class="mi hidden-scroll"><div><p class="mi-name">Buti-papa</p><p class="mi-sub">Para 2: $40.000</p></div><span class="mi-price">$22.000</span></div>
+      <div class="mi hidden-scroll"><div><p class="mi-name">Salchipapa Mixta</p><p class="mi-sub">Para 2: $50.000</p></div><span class="mi-price">$26.000</span></div>
+      <div class="mi hidden-scroll"><div><p class="mi-name">Pollo-Ranchera</p><p class="mi-sub">Opción apanado · Para 2: $50.000</p></div><span class="mi-price">$26.000</span></div>
+    </div>
+  </div>
+</div>
+
+<div class="sec-wrap alt" id="patacones">
+  <div class="photo-carousel" style="--spd:38s;">
+    <div class="pc-track">
+      <img class="pc-img" src="assets/patacones/patacones1.jpg" alt="">
+      <img class="pc-img" src="assets/patacones/patacones2.jpg" alt="">
+      <img class="pc-img" src="assets/patacones/patacones3.png" alt="">
+      <img class="pc-img" src="assets/patacones/patacones4.png" alt="">
+      <img class="pc-img" src="assets/patacones/patacones1.jpg" alt="">
+      <img class="pc-img" src="assets/patacones/patacones2.jpg" alt="">
+      <img class="pc-img" src="assets/patacones/patacones3.png" alt="">
+      <img class="pc-img" src="assets/patacones/patacones4.png" alt="">
+    </div>
+  </div>
+  <div class="sec">
+    <p class="sec-label hidden-scroll">Escudos de Plátano</p>
+    <h2 class="sec-title hidden-scroll">Patacones</h2>
+    <div class="sec-rule hidden-scroll"></div>
+    <div class="info-box hidden-scroll">Opción gratinada <strong>sin costo adicional</strong>. ¡Pídela con furia!</div>
+    <div class="menu-list">
+      <div class="mi hidden-scroll"><div><p class="mi-name">Patacón Ranchero</p><p class="mi-sub">Para 2: $46.000</p></div><span class="mi-price">$25.000</span></div>
+      <div class="mi hidden-scroll"><div><p class="mi-name">Patacón de Cerdo</p><p class="mi-sub">Para 2: $50.000</p></div><span class="mi-price">$27.000</span></div>
+      <div class="mi hidden-scroll"><div><p class="mi-name">Patacón de Pollo</p><p class="mi-sub">Para 2: $50.000</p></div><span class="mi-price">$27.000</span></div>
+      <div class="mi hidden-scroll"><div><p class="mi-name">Patacón de Carne</p><p class="mi-sub">Para 2: $50.000</p></div><span class="mi-price">$27.000</span></div>
+      <div class="mi hidden-scroll"><div><p class="mi-name">Patacón Mixto</p><p class="mi-sub">Para 2: $55.000</p></div><span class="mi-price">$30.000</span></div>
+      <div class="mi hidden-scroll"><div><p class="mi-name">Patacón Hawaiano</p><p class="mi-sub">Para 2: $55.000</p></div><span class="mi-price">$30.000</span></div>
+      <div class="mi hidden-scroll"><div><p class="mi-name">Patacón Tex Mex</p><p class="mi-sub">Para 2: $58.000</p></div><span class="mi-price">$32.000</span></div>
+      <div class="mi special hidden-scroll"><div><p class="mi-name">Patacoburger</p><p class="mi-sub">2 patacones · carne 160g · 2 quesos · tocineta · papas · Adición: +$8.000</p></div><span class="mi-price">$25.000</span></div>
+    </div>
+  </div>
+</div>
+
+<div class="sec-wrap" id="asados">
+  <div class="photo-carousel" style="--spd:40s;">
+    <div class="pc-track">
+      <img class="pc-img" src="assets/asados/parrillada.png" alt="">
+      <img class="pc-img" src="assets/asados/asados1.jpg" alt="">
+      <img class="pc-img" src="assets/asados/asado-mixto.jpg" alt="">
+      <img class="pc-img" src="assets/asados/asados2.png" alt="">
+      <img class="pc-img" src="assets/asados/parrillada.png" alt="">
+      <img class="pc-img" src="assets/asados/asados1.jpg" alt="">
+      <img class="pc-img" src="assets/asados/asado-mixto.jpg" alt="">
+      <img class="pc-img" src="assets/asados/asados2.png" alt="">
+    </div>
+  </div>
+  <div class="sec">
+    <p class="sec-label hidden-scroll">Al Carbón y a la Leña</p>
+    <h2 class="sec-title hidden-scroll">Asados al Fuego</h2>
+    <div class="sec-rule hidden-scroll"></div>
+    <div class="info-box hidden-scroll">Todos con chimichurri de la casa. Acompañante: <strong>Papa · Yuquita · Patacones · Maduro · Arepa</strong></div>
+    <div class="menu-list">
+      <div class="mi hidden-scroll"><div><p class="mi-name">Carne de Res</p><p class="mi-sub">Gratinado ranchero: $35.000</p></div><span class="mi-price">$30.000</span></div>
+      <div class="mi hidden-scroll"><div><p class="mi-name">Pechuga al Grill</p><p class="mi-sub">Gratinado ranchero: $33.000</p></div><span class="mi-price">$28.000</span></div>
+      <div class="mi hidden-scroll"><div><p class="mi-name">Lomo de Cerdo</p><p class="mi-sub">Gratinado ranchero: $33.000</p></div><span class="mi-price">$28.000</span></div>
+      <div class="mi hidden-scroll"><div><p class="mi-name">Mixto al Grill</p></div><span class="mi-price">$32.000</span></div>
+      <div class="mi hidden-scroll"><div><p class="mi-name">Ranchero de la Casa</p></div><span class="mi-price">$38.000</span></div>
+      <div class="mi hidden-scroll"><div><p class="mi-name">Churrasco</p></div><span class="mi-price">$45.000</span></div>
+      <div class="mi special hidden-scroll"><div><p class="mi-name">Parrillada de la Casa</p><p class="mi-sub">Para 2 · Carne, cerdo, pechuga, 2 alas, chorizo, salchicha, ensalada, 2 acompañantes</p></div><span class="mi-price">$50.000</span></div>
+    </div>
+  </div>
+</div>
+
+<div class="sec-wrap alt" id="mazorcadas">
+  <div class="photo-carousel" style="--spd:30s;">
+    <div class="pc-track">
+      <img class="pc-img" src="assets/mazorcadas/mazorcadas1.jpg" alt="">
+      <img class="pc-img" src="assets/mazorcadas/mazorcadas2.png" alt="">
+      <img class="pc-img" src="assets/mazorcadas/mazorcadas1.jpg" alt="">
+      <img class="pc-img" src="assets/mazorcadas/mazorcadas2.png" alt="">
+    </div>
+  </div>
+  <div class="sec">
+    <p class="sec-label hidden-scroll">El Maíz del Dios</p>
+    <h2 class="sec-title hidden-scroll">Mazorcadas</h2>
+    <div class="sec-rule hidden-scroll"></div>
+    <div class="info-box hidden-scroll">Proteína · Chorizo · Salsas · <strong>Queso gratinado</strong> · Maíz · Chongo · Papa o arepa</div>
+    <div class="menu-list" style="margin-bottom: 70px;">
+      <div class="mi hidden-scroll"><div><p class="mi-name">Mazorcada de Pollo</p></div><span class="mi-price">$25.000</span></div>
+      <div class="mi hidden-scroll"><div><p class="mi-name">Mazorcada de Carne</p></div><span class="mi-price">$25.000</span></div>
+      <div class="mi hidden-scroll"><div><p class="mi-name">Mazorcada Mixta</p></div><span class="mi-price">$28.000</span></div>
+    </div>
+    <div id="entradas">
+      <p class="sec-label hidden-scroll">Para Empezar el Asalto</p>
+      <h2 class="sec-title hidden-scroll">Entradas</h2>
+      <div class="sec-rule hidden-scroll"></div>
+      <div class="menu-list">
+        <div class="mi hidden-scroll"><div><p class="mi-name">Maduro Ranchero</p></div><span class="mi-price">$22.000</span></div>
+        <div class="mi hidden-scroll"><div><p class="mi-name">Papas Recargadas</p></div><span class="mi-price">$22.000</span></div>
+        <div class="mi hidden-scroll"><div><p class="mi-name">Porción Papas / Patacones</p></div><span class="mi-price">$12.000</span></div>
+        <div class="mi hidden-scroll"><div><p class="mi-name">Chicken Tender</p><p class="mi-sub">10 unidades</p></div><span class="mi-price">$30.000</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="sec-wrap" id="hotdogs">
+  <div class="photo-carousel" style="--spd:28s;">
+    <div class="pc-track">
+      <img class="pc-img" src="assets/hotdogs/hotdog.png" alt="">
+      <img class="pc-img" src="assets/hotdogs/hotdog2.jpg" alt="">
+      <img class="pc-img" src="assets/hotdogs/hotdog.png" alt="">
+      <img class="pc-img" src="assets/hotdogs/hotdog2.jpg" alt="">
+    </div>
+  </div>
+  <div class="sec">
+    <p class="sec-label hidden-scroll">Rápido y Brutal</p>
+    <h2 class="sec-title hidden-scroll">Hot Dogs</h2>
+    <div class="sec-rule hidden-scroll"></div>
+    <div class="info-box hidden-scroll">En combo con papas · <strong>Opción cebollero disponible</strong></div>
+    <div class="menu-list">
+      <div class="mi hidden-scroll"><div><p class="mi-name">Sencillo</p></div><span class="mi-price">$16.000</span></div>
+      <div class="mi hidden-scroll"><div><p class="mi-name">Ranchero</p></div><span class="mi-price">$20.000</span></div>
+      <div class="mi hidden-scroll"><div><p class="mi-name">Suizo</p></div><span class="mi-price">$22.000</span></div>
+      <div class="mi hidden-scroll"><div><p class="mi-name">Tex-Mex</p></div><span class="mi-price">$25.000</span></div>
+      <div class="mi hidden-scroll"><div><p class="mi-name">Hawaiano</p></div><span class="mi-price">$25.000</span></div>
+    </div>
+  </div>
+</div>
+
+<div class="sec-wrap alt" id="otros">
+  <div class="sec">
+    <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(300px,1fr)); gap: 60px;">
+      <div>
+        <p class="sec-label hidden-scroll">De la Casa</p>
+        <h2 class="sec-title hidden-scroll">Choripanes</h2>
+        <div class="sec-rule hidden-scroll"></div>
+        <div class="menu-list" style="grid-template-columns:1fr;">
+          <div class="mi hidden-scroll"><div><p class="mi-name">Pollo</p></div><span class="mi-price">$25.000</span></div>
+          <div class="mi hidden-scroll"><div><p class="mi-name">Carne</p></div><span class="mi-price">$25.000</span></div>
+          <div class="mi hidden-scroll"><div><p class="mi-name">Mixto</p></div><span class="mi-price">$28.000</span></div>
+        </div>
+      </div>
+      <div>
+        <p class="sec-label hidden-scroll">Rellenas o Picadas</p>
+        <h2 class="sec-title hidden-scroll">Arepas</h2>
+        <div class="sec-rule hidden-scroll"></div>
+        <div class="menu-list" style="grid-template-columns:1fr;">
+          <div class="mi hidden-scroll"><div><p class="mi-name">Pollo</p></div><span class="mi-price">$25.000</span></div>
+          <div class="mi hidden-scroll"><div><p class="mi-name">Carne</p></div><span class="mi-price">$25.000</span></div>
+          <div class="mi hidden-scroll"><div><p class="mi-name">Mixta</p></div><span class="mi-price">$28.000</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <img class="foot-logo-img" src="assets/logo/logo.png" alt="Vikingos">
+  <p class="foot-sub">Burgers & Wings</p>
+  <div class="foot-rule"></div>
+  <p class="foot-note">Comida Forjada en Fuego. Est 2020.</p>
+</footer>
+
+<script>
+  const emberContainer = document.getElementById('ember-container');
+  for(let i=0; i<40; i++) {
+    let ember = document.createElement('div');
+    ember.className = 'e';
+    let size = Math.random() * 5 + 2;
+    ember.style.width = size + 'px';
+    ember.style.height = size + 'px';
+    ember.style.left = Math.random() * 100 + '%';
+    ember.style.animationDuration = (Math.random() * 3 + 2) + 's';
+    ember.style.animationDelay = (Math.random() * 3) + 's';
+    ember.style.setProperty('--d', (Math.random() * 100 - 50) + 'px');
+    const colors = ['#ff4500', '#ff8c00', '#ffd700', '#d40000'];
+    ember.style.background = colors[Math.floor(Math.random() * colors.length)];
+    emberContainer.appendChild(ember);
+  }
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('show-scroll'); });
+  }, { threshold: 0.1, rootMargin: "0px 0px -50px 0px" });
+  document.querySelectorAll('.hidden-scroll').forEach(el => observer.observe(el));
+
+  const sections = document.querySelectorAll('[id]');
+  const navLinks = document.querySelectorAll('.nav-tab');
+  window.addEventListener('scroll', () => {
+    let current = '';
+    sections.forEach(s => { if (pageYOffset >= (s.offsetTop - 150)) current = s.getAttribute('id'); });
+    navLinks.forEach(link => {
+      link.classList.remove('active');
+      if (link.getAttribute('href') === '#' + current) link.classList.add('active');
+    });
+  });
+</script>
+</body>
+</html>
